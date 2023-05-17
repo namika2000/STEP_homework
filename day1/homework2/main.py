@@ -37,8 +37,6 @@ def main(in_path: str, out_path: str) -> None:
         score: int = anagram[1]
         f.write("%s\n" % word)
         overall_score += score
-
-  # print('-------', overall_score)
         
 for i in range(len(INPUT_FILE)):
   main(INPUT_FILE[i], OUTPUT_FILE[i])
