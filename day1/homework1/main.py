@@ -5,6 +5,11 @@ from utils.binary_search import binary_search
 from utils.dict_merge_sort import dict_merge_sort
 from utils.words_merge_sort import words_merge_sort
 
+# How to use:
+#
+# $ python3 main.py '任意の単語'
+#
+
 ##CONST##
 ##DICTIONARY###########
 DICTIONARY = read_file("words.txt")
@@ -33,7 +38,7 @@ if __name__ == "__main__":
     if len(sys.argv) != 2:
         print("usage: %s data_file" % sys.argv[0])
         exit(1)
-    print('---', sys.argv[1])
+    print(f'{sys.argv[1]}のanagramを探します')
     main(sys.argv[1])
 
 

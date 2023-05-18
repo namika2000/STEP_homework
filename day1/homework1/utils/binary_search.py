@@ -44,15 +44,23 @@ def binary_search(A: list[str], sorted_word: str) -> list[str]:
     return ans
   
   else:
+  
     len_sorted_word: int = len(sorted_word)
     len_mid: int = len(mid)
+    
+    if X == 0:
+      return ans
+    
     for i in range(min(len_sorted_word, len_mid)):
       if ord(sorted_word[i]) < ord(mid[i]):
         A = A[:X]
         return binary_search(A, sorted_word)
-      else:
+      elif ord(sorted_word[i]) > ord(mid[i]):
         A = A[X:]
         return binary_search(A, sorted_word)
+      else:
+        continue
+      
     if len_sorted_word < len_mid:
       A = A[:X]
       return binary_search(A, sorted_word)
