@@ -39,13 +39,10 @@ def main(in_path: str, out_path: str) -> None:
         anagrams.append(best_anagram)
         break
 
-  overall_score = 0
   with open(out_path, 'w') as f:
     for anagram in anagrams:
         word: str = anagram[0]
-        score: int = anagram[1]
         f.write("%s\n" % word)
-        overall_score += score
         
 for i in range(len(INPUT_FILE)):
   main(INPUT_FILE[i], OUTPUT_FILE[i])
