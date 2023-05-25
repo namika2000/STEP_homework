@@ -1,5 +1,20 @@
 {
   "python.analysis.extraPaths": [
-    "./day1/homework1"
-  ]
+    "./day1/homework1",
+    "/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/site-packages"
+  ],
+
+  "python.linting.flake8Args": [
+    "--max-line-length",
+    "150"
+  ],
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.black-formatter",
+
+    "editor.formatOnSave": true
+},
+
+"black-formatter.args": [
+    "--line-length=120"
+]
 }

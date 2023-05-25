@@ -44,5 +44,6 @@ def main(in_path: str, out_path: str) -> None:
         word: str = anagram[0]
         f.write("%s\n" % word)
         
-for i in range(len(INPUT_FILE)):
-  main(INPUT_FILE[i], OUTPUT_FILE[i])
+if __name__ == "__main__":
+  for i in range(len(INPUT_FILE)):
+    main(INPUT_FILE[i], OUTPUT_FILE[i])
