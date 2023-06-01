@@ -1,6 +1,5 @@
 #! /usr/bin/python3
-# homework1: Support multiplication and division
-# homework2: Add test cases
+# homework3: Support brackets calculation
 
 
 def read_number(line: str, index: int) -> list[dict, int]:
