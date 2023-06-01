@@ -35,17 +35,62 @@ def first_calculate_hash(key):
     return hash
 
 
-# the updated hash function, which is used in this code
+# The updated hash function
+# Cannot be used with performance_test function
+# because both function use random.seed, so different random numbers are created with the same key.
+#
 # Multiply the ASKⅡ code of a character with randomly generated integer so that
 # anagrams have different hash values.
-def calculate_hash(key):
+def updated_calculate_hash(key):
     assert type(key) == str
     hash = 0
-    random.seed(key)
+    random.seed(key)  # a
     for i in key:
         num = random.randint(0, 1000)
         hash += num * ord(i)
     return hash
+
+
+# The hash function, which is used in the code
+def calculate_hash(key):
+    assert type(key) == str
+    hash = 0
+    for i in key:
+        hash = int(hash * 128 + ord(i))
+    return hash
+
+
+# Determine if the number is prime or not
+#
+# |num|: number to check
+# Return value: True or False
+# True if |num| is prime number
+# Otherwise, False
+def is_prime(num):
+    square_num = int(num**0.5)
+    if num == 1:
+        return False
+    for i in range(2, square_num + 1, 2):
+        if num % i == 0:
+            return False
+    return True
+
+
+# Return the nearest prime number that is less than or equal to the number
+def prime_before(num):
+    while num >= 2:
+        if is_prime(num):
+            return num
+        num -= 1
+    return None
+
+
+# Return the nearest prime number that is more than or equal to the number
+def prime_next(num):
+    while True:
+        if is_prime(num):
+            return num
+        num += 1
 
 
 # An item object that represents one key - value pair in the hash table.
@@ -86,7 +131,7 @@ class HashTable:
     # Return value: True if a new item is added.
     # False if the key already exists
     # and the value is updated.
-    def put(self, key, value):
+    def put(self, key, value, not_rehash=True):
         assert type(key) == str
         self.check_size()  # Note: Don't remove this code.
         bucket_index = calculate_hash(key) % self.bucket_size
@@ -100,11 +145,14 @@ class HashTable:
         if self.buckets[bucket_index]:
             self.buckets[bucket_index].previous = new_item
         self.buckets[bucket_index] = new_item
-        self.item_count += 1
+        if not_rehash:
+            self.item_count += 1
 
         # Rehash
         if self.item_count > self.bucket_size * 0.7:
-            self.rehashing(self.bucket_size * 2 + 1)
+            new_bucket_size = prime_next(self.bucket_size * 2)
+            print(f"rehash twice the size to {new_bucket_size}")
+            self.rehashing(new_bucket_size)
         return True
 
     # Get an item from the hash table.
@@ -135,33 +183,22 @@ class HashTable:
         self.check_size()  # Note: Don't remove this code.
         bucket_index = calculate_hash(key) % self.bucket_size
         item = self.buckets[bucket_index]
-        loop = 0
         while item:
-            print("-----", loop)
-            loop += 1
             if item.key == key:
-                # Assign (key, value, next) of the next item to the item
-                if item.next:
-                    print("item is in the middle")
-                    if item.previous:
-                        item.previous.next = item.next
-                        item.next = item.previous
-                    else:
-                        print("item is the first one")
-                        item.next.previous = None
-                        self.buckets[bucket_index] = item.next
+                # Connect item's next and previous with a pointer and skip the item
+                if item.previous:
+                    if item.next:
+                        item.next.previous = item.previous
+                    item.previous.next = item.next
                 else:
-                    print("item is the last one")
-                    if item.previous:
-                        item.previous.next = None
-                    else:
-                        print("item is only item in the bucket")
-                        self.buckets[bucket_index] = None
+                    if item.next:
+                        item.next.previous = None
+                    self.buckets[bucket_index] = item.next
                 self.item_count -= 1
 
                 # Rehash
                 if (self.item_count < self.bucket_size * 0.3) and (self.bucket_size >= 100):
-                    new_bucket_size = self.bucket_size // 2
+                    new_bucket_size = prime_before(self.bucket_size // 2)
                     if new_bucket_size % 2 == 0:
                         new_bucket_size -= 1
                     print(f"rehash half the size to {new_bucket_size}")
@@ -170,7 +207,6 @@ class HashTable:
                 return True
             else:
                 item = item.next
-                print("item <- next.item")
         return False
         # ------------------------#
 
@@ -191,8 +227,7 @@ class HashTable:
         self.bucket_size = new_bucket_size
         for item in item_list:
             key, value = item
-            self.put(key, value)
-            self.item_count -= 1
+            self.put(key, value, not_rehash=False)
 
     # Return the total number of items in the hash table.
     def size(self):
@@ -283,33 +318,27 @@ def functional_test():
 # 2) tweak the hash function (Hint: think about ways to reduce hash conflicts).
 def performance_test():
     hash_table = HashTable()
-    count = 0
 
-    for iteration in range(10):
+    for iteration in range(100):
         begin = time.time()
         random.seed(iteration)
-        for i in range(10):
+        for i in range(10000):
             rand = random.randint(0, 100000000)
-            flag = hash_table.put(str(rand), str(rand))
-            if flag:
-                count += 1
+            hash_table.put(str(rand), str(rand))
         random.seed(iteration)
-        for i in range(10):
+        for i in range(10000):
             rand = random.randint(0, 100000000)
             hash_table.get(str(rand))
         end = time.time()
         print("%d %.6f" % (iteration, end - begin))
-        print("count", count, "hash_table_size", hash_table.size())
 
-    count_del = 0
-    for iteration in range(10):
+    for iteration in range(100):
+        begin = time.time()
         random.seed(iteration)
-        for i in range(10):
+        for i in range(10000):
             rand = random.randint(0, 100000000)
-            flag = hash_table.delete(str(rand))
-            if flag:
-                count_del += 1
-        print("count_del", count_del, "hash_table_size", hash_table.size())
+            hash_table.delete(str(rand))
+        print("%d %.6f" % (iteration, end - begin))
 
     assert hash_table.size() == 0
     print("Performance tests passed!")
