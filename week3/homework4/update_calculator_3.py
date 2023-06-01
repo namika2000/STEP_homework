@@ -249,7 +249,7 @@ def multiply_divide_first(tokens: list[dict]) -> list[dict]:
 
 def evaluate(tokens: list[dict]) -> float:
     answer = 0
-    if tokens[0] == {"type": "MINUS"}:  # 負の数に対応させる
+    if tokens[0] == {"type": "MINUS"}:  # Support negative numbers
         tokens.insert(0, {"type": "NUMBER", "number": 0})  # Insert a dummy '0' token
     tokens.insert(0, {"type": "PLUS"})  # Insert a dummy '+' token
     tokens = multiply_divide_first(tokens)
