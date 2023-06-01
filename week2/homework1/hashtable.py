@@ -36,15 +36,15 @@ def first_calculate_hash(key):
 
 
 # The updated hash function
-# Cannot be used with performance_test function
-# because both function use random.seed, so different random numbers are created with the same key.
+# Cannot be used with performance_test function (I'm not sure why)
+# Maybe because both function use random.seed, so different random numbers are created with the same key?
 #
 # Multiply the ASKⅡ code of a character with randomly generated integer so that
 # anagrams have different hash values.
 def updated_calculate_hash(key):
     assert type(key) == str
     hash = 0
-    random.seed(key)  # a
+    random.seed(key)
     for i in key:
         num = random.randint(0, 1000)
         hash += num * ord(i)
@@ -151,7 +151,6 @@ class HashTable:
         # Rehash
         if self.item_count > self.bucket_size * 0.7:
             new_bucket_size = prime_next(self.bucket_size * 2)
-            print(f"rehash twice the size to {new_bucket_size}")
             self.rehashing(new_bucket_size)
         return True
 
@@ -201,7 +200,6 @@ class HashTable:
                     new_bucket_size = prime_before(self.bucket_size // 2)
                     if new_bucket_size % 2 == 0:
                         new_bucket_size -= 1
-                    print(f"rehash half the size to {new_bucket_size}")
                     self.rehashing(new_bucket_size)
 
                 return True
